@@ -14,6 +14,7 @@ class WorkInputLBQTest {
     val workInput = lbq.toWorkInput()
     val taken = workInput.takeBlocking(3)
     assertThat(taken).isEqualTo(listOf(1, 2, 3))
+    assertThat(lbq.isEmpty()).isTrue
   }
 
   @Test
@@ -22,6 +23,7 @@ class WorkInputLBQTest {
     val workInput = lbq.toWorkInput()
     val taken = workInput.takeBlocking(5)
     assertThat(taken).isEqualTo(listOf(1, 2, 3))
+    assertThat(lbq.isEmpty()).isTrue
   }
 
   @Test
@@ -30,6 +32,7 @@ class WorkInputLBQTest {
     val workInput = lbq.toWorkInput()
     val taken = workInput.takeBlocking(4)
     assertThat(taken).isEqualTo(listOf(1, 2, 3, 4))
+    assertThat(lbq.size).isEqualTo(1)
   }
 
   @Test
@@ -53,6 +56,7 @@ class WorkInputLBQTest {
     consumerThread.join()
 
     assertThat(taken.get()).isEqualTo(listOf(1))
+    assertThat(lbq.isEmpty()).isTrue
   }
 
 }

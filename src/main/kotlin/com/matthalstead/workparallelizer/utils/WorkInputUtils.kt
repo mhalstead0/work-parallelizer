@@ -11,10 +11,20 @@ private class WorkInput_BackedByLBQ<T>(
   private val linkedBlockingQueue: LinkedBlockingQueue<T>
 ): WorkInput<T> {
   override fun takeBlocking(maxCount: Int): List<T> {
-    val result = linkedBlockingQueue.take(maxCount)
-    return result.ifEmpty {
-      listOf(linkedBlockingQueue.take())
+    val first = linkedBlockingQueue.take()
+
+    val result = mutableListOf(first)
+    var remainingToTake = maxCount - 1
+    while (remainingToTake > 0) {
+      val next = linkedBlockingQueue.poll()
+      if (next == null) {
+        remainingToTake = 0
+      } else {
+        result.add(next)
+        remainingToTake--
+      }
     }
+    return result.toList()
   }
 
 }
