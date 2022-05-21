@@ -11,12 +11,12 @@ object ParallelizerTestCases {
 
   fun testSimple(
     workParallelizer: WorkParallelizer,
-    inputQueue: LinkedBlockingQueue<Int>,
+    inputSink: (Int) -> Unit,
     outputQueue: LinkedBlockingQueue<String>,
     ordering: OrderingType
   ) {
     val count = 100
-    (0 until count).forEach { inputQueue.add(it) }
+    (0 until count).forEach { inputSink(it) }
 
     val deadline = Instant.now().plusSeconds(10L)
     val timedOut = { Instant.now().isAfter(deadline) }

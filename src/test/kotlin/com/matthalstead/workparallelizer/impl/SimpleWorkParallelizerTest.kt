@@ -59,7 +59,7 @@ class SimpleWorkParallelizerTest {
   fun `simple processing`() {
     ParallelizerTestCases.testSimple(
       workParallelizer = simpleWorkParallelizer,
-      inputQueue = inputQueue,
+      inputSink = { inputQueue.add(it) },
       outputQueue = outputQueue,
       ordering = OrderingType.STRICT
     )
