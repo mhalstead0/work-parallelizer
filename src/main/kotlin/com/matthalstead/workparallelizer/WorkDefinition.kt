@@ -7,6 +7,12 @@ class WorkDefinition<I, O> (
   val errorHandler: (WorkParallelizerException) -> Unit
 )
 
-interface WorkInput<T> {
+sealed interface WorkInput<T>
+
+interface WorkInputBlocking<T> : WorkInput<T> {
   fun takeBlocking(maxCount: Int): List<T>
+}
+
+interface WorkInputSuspending<T> : WorkInput<T> {
+  suspend fun take(maxCount: Int): List<T>
 }

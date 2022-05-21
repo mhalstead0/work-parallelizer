@@ -1,15 +1,16 @@
 package com.matthalstead.workparallelizer.utils
 
 import com.matthalstead.workparallelizer.WorkInput
+import com.matthalstead.workparallelizer.WorkInputBlocking
 import java.util.concurrent.LinkedBlockingQueue
 
 object WorkInputUtils {
-  fun <T> LinkedBlockingQueue<T>.toWorkInput(): WorkInput<T> = WorkInput_BackedByLBQ(this)
+  fun <T> LinkedBlockingQueue<T>.toWorkInput(): WorkInputBlocking<T> = WorkInputBlocking_BackedByLBQ(this)
 }
 
-private class WorkInput_BackedByLBQ<T>(
+private class WorkInputBlocking_BackedByLBQ<T>(
   private val linkedBlockingQueue: LinkedBlockingQueue<T>
-): WorkInput<T> {
+): WorkInputBlocking<T> {
   override fun takeBlocking(maxCount: Int): List<T> {
     val first = linkedBlockingQueue.take()
 

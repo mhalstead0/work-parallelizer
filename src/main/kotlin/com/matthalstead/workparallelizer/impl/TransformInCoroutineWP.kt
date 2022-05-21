@@ -1,6 +1,8 @@
 package com.matthalstead.workparallelizer.impl
 
+import com.matthalstead.workparallelizer.ConfigException
 import com.matthalstead.workparallelizer.StartedTwiceException
+import com.matthalstead.workparallelizer.WorkInputBlocking
 import com.matthalstead.workparallelizer.WorkParallelizer
 import com.matthalstead.workparallelizer.WorkParallelizerStats
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +15,15 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TransformInCoroutineWP<I, O>(
   private val workParallelizerContext: WorkParallelizerContext<I, O>
 ) : WorkParallelizer {
+  private val workDef = workParallelizerContext.workDefinition
+
+  private val workInput: WorkInputBlocking<I> = when (workDef.input) {
+    is WorkInputBlocking -> workDef.input
+    else -> throw ConfigException("TransformInCoroutineWP does not support input from ${workDef.input.javaClass}")
+  }
+
   private val statsTracker = workParallelizerContext.statsTracker
   override val stats: WorkParallelizerStats = statsTracker
-
-  private val workDef = workParallelizerContext.workDefinition
 
   private val started = AtomicBoolean(false)
   private val killed = AtomicBoolean(false)
@@ -35,7 +42,7 @@ class TransformInCoroutineWP<I, O>(
     while (!killed.get()) {
 
       //TODO handle input exceptions
-      val batch = workDef.input.takeBlocking(workParallelizerContext.config.batchSize)
+      val batch = workInput.takeBlocking(workParallelizerContext.config.batchSize)
 
       val outputValues = runBlocking {
         batch.map { input ->
