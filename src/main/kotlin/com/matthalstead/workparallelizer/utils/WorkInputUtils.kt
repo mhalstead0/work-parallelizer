@@ -3,6 +3,7 @@ package com.matthalstead.workparallelizer.utils
 import com.matthalstead.workparallelizer.WorkInputBlocking
 import com.matthalstead.workparallelizer.WorkInputSuspending
 import kotlinx.coroutines.channels.Channel
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 object WorkInputUtils {
@@ -11,15 +12,15 @@ object WorkInputUtils {
 }
 
 private class WorkInputBlocking_BackedByLBQ<T>(
-  private val linkedBlockingQueue: LinkedBlockingQueue<T>
+  private val blockingQueue: BlockingQueue<T>
 ): WorkInputBlocking<T> {
   override fun takeBlocking(maxCount: Int): List<T> {
-    val first = linkedBlockingQueue.take()
+    val first = blockingQueue.take()
 
     val result = mutableListOf(first)
     var remainingToTake = maxCount - 1
     while (remainingToTake > 0) {
-      val next = linkedBlockingQueue.poll()
+      val next = blockingQueue.poll()
       if (next == null) {
         remainingToTake = 0
       } else {
