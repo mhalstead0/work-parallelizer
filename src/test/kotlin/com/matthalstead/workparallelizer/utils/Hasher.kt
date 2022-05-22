@@ -1,13 +1,16 @@
 package com.matthalstead.workparallelizer.utils
 
-import org.junit.jupiter.api.Test
 import java.security.MessageDigest
 
 object Hasher {
 
   fun hash(str: String): ByteArray {
+    return hash(str.toByteArray())
+  }
+
+  fun hash(byteArray: ByteArray): ByteArray {
     val messageDigest = MessageDigest.getInstance("SHA-256")
-    return messageDigest.digest(str.toByteArray())
+    return messageDigest.digest(byteArray)
   }
 
 }

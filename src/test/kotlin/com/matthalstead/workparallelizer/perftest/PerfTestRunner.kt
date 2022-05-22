@@ -81,10 +81,14 @@ class PerfTestRunner(
   }
 
   companion object {
-    const val SMALL_TEST_INPUT_COUNT = 100L
-    const val MEDIUM_TEST_INPUT_COUNT = 10_000L
-    const val LARGE_TEST_INPUT_COUNT = 1_000_000L
-    val transform: (String) -> ByteArray = { Hasher.hash(it) }
+    const val SMALL_TEST_INPUT_COUNT = 10L
+    const val MEDIUM_TEST_INPUT_COUNT = 1_000L
+    const val LARGE_TEST_INPUT_COUNT = 100_000L
+    val transform: (String) -> ByteArray = { s ->
+      var b = Hasher.hash(s)
+      repeat(1000) { b = Hasher.hash(b) }
+      b
+    }
     val errorHandler: (WorkParallelizerException) -> Unit = { e -> e.printStackTrace() }
   }
 
