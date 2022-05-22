@@ -43,7 +43,6 @@ class ThreePhaseCoroutinesWP<I, O>(
       runBlocking {
         //TODO handle input exceptions
         val batch = workInput.take(workParallelizerContext.config.batchSize)
-        println("Batch size: ${batch.size}")
         batch.forEach { input ->
           async { //TODO handle transform exceptions
             val output = workDef.transform(input)
