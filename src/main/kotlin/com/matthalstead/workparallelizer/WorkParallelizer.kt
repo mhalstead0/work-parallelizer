@@ -4,7 +4,6 @@ import com.matthalstead.workparallelizer.impl.ThreePhaseCoroutinesWP
 import com.matthalstead.workparallelizer.impl.TransformInCoroutineWP
 import com.matthalstead.workparallelizer.impl.WorkParallelizerContext
 import com.matthalstead.workparallelizer.stats.StatsTracker
-import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 
 interface WorkParallelizer {

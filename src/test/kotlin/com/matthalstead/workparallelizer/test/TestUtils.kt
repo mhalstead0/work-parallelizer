@@ -1,5 +1,6 @@
 package com.matthalstead.workparallelizer.test
 
+import com.matthalstead.workparallelizer.WorkInputSuspending
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -30,5 +31,16 @@ object TestUtils {
   object TimedOut : RetryUntilTrueOrTimeoutResult()
 
 
+
+}
+
+class WorkInputSuspendingWithConcurrencyTracking<T>(
+  private val workInputSuspending: WorkInputSuspending<T>,
+  private val concurrentCallTracker: ConcurrentCallTracker
+): WorkInputSuspending<T> {
+  override suspend fun take(maxCount: Int): List<T> =
+    concurrentCallTracker.trackSuspending {
+      workInputSuspending.take(maxCount)
+    }
 
 }
