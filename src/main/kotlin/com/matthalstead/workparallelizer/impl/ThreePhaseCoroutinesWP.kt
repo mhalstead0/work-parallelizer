@@ -9,6 +9,8 @@ import com.matthalstead.workparallelizer.WorkParallelizerStats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -45,10 +47,12 @@ class ThreePhaseCoroutinesWP<I, O>(
         //TODO handle input exceptions
         val batch = workInput.take(workParallelizerContext.config.batchSize)
         batch.forEach { input ->
-          launch { //TODO handle transform exceptions
-            val output = workDef.transform(input)
-            statsTracker.run {
-              workDef.output(output) //TODO handle output exceptions
+          Dispatchers.Default.invoke {
+            this.launch { //TODO handle transform exceptions
+              val output = workDef.transform(input)
+              statsTracker.run {
+                workDef.output(output) //TODO handle output exceptions
+              }
             }
           }
         }
