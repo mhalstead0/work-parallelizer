@@ -1,11 +1,9 @@
 package com.matthalstead.workparallelizer.impl
 
 import com.matthalstead.workparallelizer.ConfigException
-import com.matthalstead.workparallelizer.StartedTwiceException
 import com.matthalstead.workparallelizer.WorkInputBlocking
 import com.matthalstead.workparallelizer.WorkParallelizer
 import com.matthalstead.workparallelizer.WorkParallelizerStats
-import java.util.concurrent.atomic.AtomicBoolean
 
 class SimpleWorkParallelizer<I, O>(
   private val workParallelizerContext: WorkParallelizerContext<I, O>
@@ -21,20 +19,16 @@ class SimpleWorkParallelizer<I, O>(
   override val stats: WorkParallelizerStats = statsTracker
 
 
-
-  private val started = AtomicBoolean(false)
-  private val killed = AtomicBoolean(false)
+  private val lifecycleHelper = LifecycleHelper()
 
   override fun start() {
-    if (!started.compareAndSet(false, true)) {
-      throw StartedTwiceException()
-    }
+    lifecycleHelper.start()
 
     workParallelizerContext.executorService.submit(this::run)
   }
 
   private fun run() {
-    while (!killed.get()) {
+    lifecycleHelper.repeatUntilKilled {
 
       //TODO handle input exceptions
       val batch = workInput.takeBlocking(workParallelizerContext.config.batchSize)
@@ -53,7 +47,7 @@ class SimpleWorkParallelizer<I, O>(
   }
 
   override fun destroy() {
-    killed.set(true)
+    lifecycleHelper.kill()
   }
 
 }
