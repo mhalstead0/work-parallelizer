@@ -37,7 +37,7 @@ class ThreePhaseCoroutinesWP<I, O>(
         //TODO handle input exceptions
         val batch = workInput.take(workParallelizerContext.config.batchSize)
         batch.forEach { input ->
-          Dispatchers.Default.invoke {
+          launch(Dispatchers.Default) {
             this.launch { //TODO handle transform exceptions
               val output = workDef.transform(input)
               statsTracker.run {
